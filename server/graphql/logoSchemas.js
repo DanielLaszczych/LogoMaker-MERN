@@ -170,6 +170,12 @@ var mutation = new GraphQLObjectType({
               text: params.text,
               color: params.color,
               fontSize: params.fontSize,
+              backgroundColor: params.backgroundColor,
+              borderColor: params.borderColor,
+              borderRadius: params.borderRadius,
+              borderWidth: params.borderWidth,
+              padding: params.padding,
+              margin: params.margin,
               lastUpdate: new Date(),
             },
             function (err) {

@@ -22,6 +22,7 @@ class HomeScreen extends Component {
           if (loading) return 'Loading...';
           if (error) return `Error! ${error.message}`;
 
+          console.log(data.logos);
           return (
             <div
               className='container row'
@@ -42,7 +43,11 @@ class HomeScreen extends Component {
                   Recent Logos
                 </h3>
                 {data.logos
-                  .sort((a, b) => b.lastUpdate - a.lastUpdate)
+                  .sort((a, b) => {
+                    let dateA = new Date(a.lastUpdate).getTime();
+                    let dateB = new Date(b.lastUpdate).getTime();
+                    return dateB - dateA;
+                  })
                   .map((logo, index) => (
                     <div
                       key={index}
