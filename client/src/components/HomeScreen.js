@@ -83,14 +83,9 @@ class HomeScreen extends Component {
                     textAlign: 'center',
                     marginBottom: '25px',
                   }}
+                  onClick={() => this.props.history.push('/create')}
                 >
-                  <Link
-                    id='add_logo_button'
-                    to='/create'
-                    style={{ textDecoration: 'none', color: 'black' }}
-                  >
-                    Add Logo
-                  </Link>
+                  Create Logo
                 </div>
               </div>
             </div>
