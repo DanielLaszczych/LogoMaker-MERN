@@ -4,6 +4,7 @@ import '../App.css';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import LogoWorkspace from './LogoWorkspace';
+import DeleteModal from './DeleteModal';
 
 const GET_LOGO = gql`
   query logo($logoId: String) {
@@ -32,6 +33,15 @@ const DELETE_LOGO = gql`
 `;
 
 class ViewLogoScreen extends Component {
+  state = {
+    deleteModalVisible: false,
+  };
+
+  deleteModalVisibility = (visibility) => {
+    console.log('working');
+    this.setState({ deleteModalVisible: visibility });
+  };
+
   render() {
     return (
       <Query
@@ -136,24 +146,36 @@ class ViewLogoScreen extends Component {
                   >
                     {(removeLogo, { loading, error }) => (
                       <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            removeLogo({ variables: { id: data.logo._id } });
-                          }}
-                        >
-                          <Link
-                            to={`/edit/${data.logo._id}`}
-                            className='btn btn-success mr-3'
+                        <DeleteModal
+                          removeLogo={() =>
+                            removeLogo({ variables: { id: data.logo._id } })
+                          }
+                          visibility={this.state.deleteModalVisible}
+                          deleteModalVisibility={this.deleteModalVisibility}
+                        ></DeleteModal>
+                        <div>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              this.deleteModalVisibility(true);
+                            }}
                           >
-                            Edit
-                          </Link>
-                          <button type='submit' className='btn btn-danger ml-3'>
-                            Delete
-                          </button>
-                        </form>
-                        {loading && <p>Loading...</p>}
-                        {error && <p>Error :( Please try again</p>}
+                            <Link
+                              to={`/edit/${data.logo._id}`}
+                              className='btn btn-success mr-3'
+                            >
+                              Edit
+                            </Link>
+                            <button
+                              type='submit'
+                              className='btn btn-danger ml-3'
+                            >
+                              Delete
+                            </button>
+                          </form>
+                          {loading && <p>Loading...</p>}
+                          {error && <p>Error :( Please try again</p>}
+                        </div>
                       </div>
                     )}
                   </Mutation>
