@@ -46,15 +46,34 @@ class ViewLogoScreen extends Component {
           return (
             <div className='container'>
               <div
-                className='panel panel-default'
-                style={{ display: 'inline-block' }}
+                className='navbar'
+                style={{
+                  backgroundColor: '#546e7a',
+                  padding: '5px 0px 5px 0px',
+                  marginTop: '25px',
+                  borderRadius: '10px',
+                }}
               >
-                <div className='panel-heading'>
-                  <h4>
-                    <Link to='/'>Home</Link>
-                  </h4>
-                  <h3 className='panel-title'>View Logo</h3>
+                <div
+                  style={{
+                    cursor: 'pointer',
+                    fontSize: '180%',
+                    color: 'white',
+                  }}
+                  onClick={() => this.props.history.push('/')}
+                >
+                  Home
                 </div>
+              </div>
+              <div
+                className='panel panel-default'
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: 'white',
+                  padding: '15px 25px 15px 25px',
+                  marginTop: '25px',
+                }}
+              >
                 <div
                   className='panel-body'
                   style={{
@@ -63,6 +82,15 @@ class ViewLogoScreen extends Component {
                     borderRadius: '10px',
                   }}
                 >
+                  <h3
+                    style={{
+                      color: 'white',
+                      textDecoration: 'underline',
+                      marginBottom: '15px',
+                    }}
+                  >
+                    View Logo
+                  </h3>
                   <dl>
                     <dt style={{ color: 'white' }}>Text:</dt>
                     <dd style={{ color: 'white', marginBottom: '20px' }}>
