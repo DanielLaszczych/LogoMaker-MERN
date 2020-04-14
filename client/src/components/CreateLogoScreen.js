@@ -147,9 +147,16 @@ class CreateLogoScreen extends Component {
                         text = node;
                       }}
                       placeholder='Text'
-                      onChange={(event) =>
-                        this.setState({ text: event.target.value })
-                      }
+                      onChange={(event) => {
+                        if (
+                          event.target.value !== '' &&
+                          /\S/.test(event.target.value)
+                        ) {
+                          this.setState({ text: event.target.value });
+                        } else {
+                          event.preventDefault();
+                        }
+                      }}
                       style={{ display: 'inline-block' }}
                       value={this.state.text}
                     />

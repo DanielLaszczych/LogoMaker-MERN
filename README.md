@@ -1,3 +1,5 @@
+.prettierignore
+
 ### Query all logos
 
 {
