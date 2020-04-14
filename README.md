@@ -52,6 +52,42 @@ lastUpdate
 }
 }
 
+### Updating a logo
+
+mutation updateLogo {
+updateLogo(id: String, text: String, color: String, fontSize: Int, backgroundColor: String, borderColor: String, borderRadius: Int, borderWidth: Int, padding: Int, margin: Int) {
+\_id
+text
+color
+fontSize
+backgroundColor
+borderColor
+borderRadius
+borderWidth
+padding
+margin
+lastUpdate
+}
+}
+
+### Deleting a logo
+
+mutation removeLogo {
+removeLogo(id: String) {
+\_id
+text
+color
+fontSize
+backgroundColor
+borderColor
+borderRadius
+borderWidth
+padding
+margin
+lastUpdate
+}
+}
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
