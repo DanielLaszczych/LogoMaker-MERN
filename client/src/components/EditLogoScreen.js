@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import { useQuery } from '@apollo/react-hooks';
 import LogoWorkspace from './LogoWorkspace';
+import { createSourceEventStream } from 'graphql';
 
 const GET_LOGO = gql`
   query logo($logoId: String) {
@@ -178,11 +179,18 @@ class EditLogoScreen extends Component {
                               text = node;
                             }}
                             placeholder='Text'
-                            onChange={(event) =>
-                              this.setState({ text: event.target.value })
-                            }
+                            onChange={(event) => {
+                              if (
+                                event.target.value !== '' &&
+                                /\S/.test(event.target.value)
+                              ) {
+                                this.setState({ text: event.target.value });
+                              } else {
+                                event.preventDefault();
+                              }
+                            }}
                             style={{ display: 'inline-block' }}
-                            defaultValue={data.logo.text}
+                            value={this.state.text || data.logo.text}
                           />
                         </div>
                         <div className='form-group'>

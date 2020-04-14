@@ -1,3 +1,57 @@
+### Query all logos
+
+{
+logos {
+\_id
+text
+color
+fontSize
+backgroundColor
+borderColor
+borderRadius
+borderWidth
+padding
+margin
+lastUpdate
+}
+}
+
+### Query a specific logo by id
+
+{
+logo(id: String) {
+\_id
+text
+color
+fontSize
+backgroundColor
+borderColor
+borderRadius
+borderWidth
+padding
+margin
+lastUpdate
+}
+}
+
+### Adding a logo
+
+mutation {
+addLogo(text: String, color: String, fontSize: Int, backgroundColor: String, borderColor: String, borderRadius: Int, borderWidth: Int, padding: Int, margin: Int) {
+\_id
+text
+color
+fontSize
+backgroundColor
+borderColor
+borderRadius
+borderWidth
+padding
+margin
+lastUpdate
+}
+}
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
