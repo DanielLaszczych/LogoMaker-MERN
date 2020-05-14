@@ -1,6 +1,72 @@
 import React, { Component } from 'react';
+import { Resizable, ResizableBox } from 'react-resizable';
+import Draggable from 'react-draggable';
+import '../App.css';
 
 class LogoWorkspace extends Component {
+  compareProps(prevProps, newProps) {
+    let differentTexts = false;
+    if (
+      prevProps.padding !== newProps.padding ||
+      prevProps.borderWidth !== newProps.borderWidth
+    ) {
+      return true;
+    } else if (prevProps.texts.length !== newProps.texts.length) {
+      return false;
+    } else {
+      for (let i = 0; i < prevProps.texts.length; i++) {
+        if (prevProps.texts[i].fontSize !== newProps.texts[i].fontSize) {
+          differentTexts = true;
+          break;
+        }
+      }
+      return differentTexts;
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.compareProps(prevProps, this.props)) {
+      let newTexts = [];
+      this.props.texts.forEach((text) => {
+        let newText = { ...text };
+        let width = document.getElementById(text.id + 'text').offsetWidth;
+        let height = document.getElementById(text.id + 'text').offsetHeight;
+        let sumWidth =
+          width + this.props.padding * 2 + this.props.borderWidth * 2;
+        let sumHeight =
+          height + this.props.padding * 2 + this.props.borderWidth * 2;
+        if (
+          (sumWidth + text.x > this.props.width - 1.5 ||
+            sumWidth + text.x > this.props.width + 1.5) &&
+          text.x !== 0
+        ) {
+          newText.x =
+            text.x -
+            (text.x +
+              width +
+              this.props.padding * 2 +
+              this.props.borderWidth * 2 -
+              this.props.width);
+        }
+        if (
+          (sumHeight + text.y > this.props.height - 1.5 ||
+            sumHeight + text.y > this.props.height + 1.5) &&
+          text.y !== 0
+        ) {
+          newText.y =
+            text.y -
+            (text.y +
+              height +
+              this.props.padding * 2 +
+              this.props.borderWidth * 2 -
+              this.props.height);
+        }
+        newTexts.push(newText);
+      });
+      this.props.rePosition(newTexts);
+    }
+  }
+
   render() {
     return (
       <div
@@ -12,21 +78,54 @@ class LogoWorkspace extends Component {
           marginLeft: '150px',
         }}
       >
-        <div
-          style={{
-            color: this.props.color,
-            fontSize: this.props.fontSize + 'px',
-            backgroundColor: this.props.backgroundColor,
-            borderColor: this.props.borderColor,
-            borderStyle: 'solid',
-            borderRadius: this.props.borderRadius + 'px',
-            borderWidth: this.props.borderWidth + 'px',
-            padding: this.props.padding + 'px',
-            margin: this.props.margin + 'px',
-          }}
+        <ResizableBox
+          minConstraints={[60, 60]}
+          height={this.props.height}
+          width={this.props.width}
+          onResize={(event, { element, size, handle }) =>
+            this.props.onResize(event, { element, size, handle })
+          }
         >
-          {this.props.text}
-        </div>
+          <div
+            style={{
+              position: 'relative',
+              height: this.props.height + 'px',
+              width: this.props.width + 'px',
+              backgroundColor: this.props.backgroundColor,
+              borderColor: this.props.borderColor,
+              borderStyle: 'solid',
+              borderRadius: this.props.borderRadius + 'px',
+              borderWidth: this.props.borderWidth + 'px',
+              padding: this.props.padding + 'px',
+              margin: this.props.margin + 'px',
+              // display: 'inline-block',
+            }}
+          >
+            {this.props.texts.map((text) => (
+              <Draggable
+                key={text.id + 'Draggable'}
+                bounds='parent'
+                onDrag={(e, position) => this.props.onDrag(e, position, text)}
+                position={{ x: text.x, y: text.y }}
+              >
+                <div
+                  id={text.id + 'text'}
+                  style={{
+                    zIndex: text.zIndex,
+                    position: 'absolute',
+                    fontSize: text.fontSize + 'px',
+                    textAlign: 'center',
+                    maxWidth: 'max-content',
+                    wordBreak: 'break-word',
+                    color: text.color,
+                  }}
+                >
+                  {text.text}
+                </div>
+              </Draggable>
+            ))}
+          </div>
+        </ResizableBox>
       </div>
     );
   }

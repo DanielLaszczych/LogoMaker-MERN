@@ -3,6 +3,7 @@ import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
 import { Link } from 'react-router-dom';
 import LogoWorkspace from './LogoWorkspace';
+import Button from 'react-bootstrap/Button';
 
 const ADD_LOGO = gql`
   mutation AddLogo(
@@ -34,15 +35,26 @@ const ADD_LOGO = gql`
 
 class CreateLogoScreen extends Component {
   state = {
-    text: 'GoLogoLo Logo',
-    color: '#FF0000',
-    fontSize: 25,
     backgroundColor: '#32CD32',
     borderColor: '#000000',
     borderRadius: 5,
     borderWidth: 5,
     padding: 10,
     margin: 5,
+    height: 100,
+    width: 400,
+    currentText: 0,
+    texts: [
+      {
+        id: 1,
+        text: 'GoLogoLo Logod',
+        color: '#FF0000',
+        fontSize: 25,
+        x: 0,
+        y: 0,
+        zIndex: 0,
+      },
+    ],
   };
 
   render() {
@@ -106,7 +118,7 @@ class CreateLogoScreen extends Component {
                     marginBottom: '15px',
                   }}
                 >
-                  View Logo
+                  Create Logo
                 </h3>
                 <form
                   onSubmit={(e) => {
@@ -135,74 +147,275 @@ class CreateLogoScreen extends Component {
                     margin.value = '';
                   }}
                 >
-                  <div className='form-group'>
-                    <label htmlFor='text' style={{ color: 'white' }}>
-                      Text:
-                    </label>
-                    <input
-                      type='text'
-                      className='form-control'
-                      name='text'
-                      ref={(node) => {
-                        text = node;
+                  {this.state.texts.length > 0 ? (
+                    <React.Fragment>
+                      <div className='form-group'>
+                        <label
+                          htmlFor='text'
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          Text: #{this.state.texts[this.state.currentText].id}
+                        </label>
+                        <input
+                          type='text'
+                          className='form-control'
+                          name='text'
+                          placeholder='Text'
+                          onChange={(event) => {
+                            if (
+                              event.target.value !== '' &&
+                              /\S/.test(event.target.value)
+                            ) {
+                              const newTexts = [...this.state.texts];
+                              const index = newTexts.indexOf(
+                                this.state.texts[this.state.currentText]
+                              );
+                              newTexts[index] = {
+                                ...this.state.texts[this.state.currentText],
+                              };
+                              newTexts[index].text = event.target.value;
+                              this.setState({ texts: newTexts });
+                            } else {
+                              event.preventDefault();
+                            }
+                          }}
+                          value={this.state.texts[this.state.currentText].text}
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label
+                          htmlFor='text'
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          Priority:{' '}
+                          {this.state.texts[this.state.currentText].zIndex}
+                        </label>
+                        <div style={{ textAlign: 'center' }}>
+                          <Button
+                            onClick={() => {
+                              if (
+                                this.state.texts[this.state.currentText]
+                                  .zIndex > 0
+                              ) {
+                                const newTexts = [...this.state.texts];
+                                const index = newTexts.indexOf(
+                                  this.state.texts[this.state.currentText]
+                                );
+                                newTexts[index] = {
+                                  ...this.state.texts[this.state.currentText],
+                                };
+                                newTexts[index].zIndex =
+                                  this.state.texts[this.state.currentText]
+                                    .zIndex - 1;
+                                this.setState({ texts: newTexts });
+                              }
+                            }}
+                            variant={
+                              this.state.texts[this.state.currentText]
+                                .zIndex === 0
+                                ? 'outline-success'
+                                : 'success'
+                            }
+                            style={{ width: '30%', marginRight: '10px' }}
+                          >
+                            Down
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              const newTexts = [...this.state.texts];
+                              const index = newTexts.indexOf(
+                                this.state.texts[this.state.currentText]
+                              );
+                              newTexts[index] = {
+                                ...this.state.texts[this.state.currentText],
+                              };
+                              newTexts[index].zIndex =
+                                this.state.texts[this.state.currentText]
+                                  .zIndex + 1;
+                              this.setState({ texts: newTexts });
+                            }}
+                            variant='success'
+                            style={{ width: '30%', marginLeft: '10px' }}
+                          >
+                            Up
+                          </Button>
+                        </div>
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='fontSize' style={{ color: 'white' }}>
+                          Font Size:{' '}
+                          {this.state.texts[this.state.currentText].fontSize}
+                        </label>
+                        <input
+                          type='range'
+                          className='custom-range'
+                          name='fontSize'
+                          min='1'
+                          max='100'
+                          style={{
+                            border: 'transparent',
+                            backgroundColor: 'transparent',
+                          }}
+                          step='1'
+                          value={
+                            this.state.texts[this.state.currentText].fontSize
+                          }
+                          id='fontSizeSlider'
+                          onChange={(event) => {
+                            const newTexts = [...this.state.texts];
+                            const index = newTexts.indexOf(
+                              this.state.texts[this.state.currentText]
+                            );
+                            newTexts[index] = {
+                              ...this.state.texts[this.state.currentText],
+                            };
+                            newTexts[index].fontSize = event.target.value;
+                            this.setState({ texts: newTexts });
+                          }}
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label htmlFor='color' style={{ color: 'white' }}>
+                          Color:
+                        </label>
+                        <input
+                          type='color'
+                          className='form-control'
+                          name='color'
+                          placeholder='Color'
+                          onChange={(event) => {
+                            const newTexts = [...this.state.texts];
+                            const index = newTexts.indexOf(
+                              this.state.texts[this.state.currentText]
+                            );
+                            newTexts[index] = {
+                              ...this.state.texts[this.state.currentText],
+                            };
+                            newTexts[index].color = event.target.value;
+                            this.setState({ texts: newTexts });
+                          }}
+                          value={this.state.texts[this.state.currentText].color}
+                        />
+                      </div>
+                      <div
+                        className='form-group'
+                        style={{ textAlign: 'center' }}
+                      >
+                        <Button
+                          variant='danger'
+                          onClick={() => {
+                            const newTexts = [...this.state.texts];
+                            newTexts.splice(this.state.currentText, 1);
+                            for (
+                              let i = this.state.currentText;
+                              i < newTexts.length;
+                              i++
+                            ) {
+                              newTexts[i].id = newTexts[i].id - 1;
+                            }
+                            let newCurrentText = 0;
+                            if (this.state.texts.length === 1) {
+                              newCurrentText = 0;
+                            } else if (
+                              this.state.texts.length > 1 &&
+                              this.state.currentText === 0
+                            ) {
+                              newCurrentText = 0;
+                            } else {
+                              newCurrentText = this.state.currentText - 1;
+                            }
+                            this.setState({
+                              texts: newTexts,
+                              currentText: newCurrentText,
+                            });
+                          }}
+                        >
+                          Remove text
+                        </Button>
+                      </div>
+                    </React.Fragment>
+                  ) : null}
+                  <div className='form-group' style={{ textAlign: 'center' }}>
+                    <Button
+                      onClick={() => {
+                        if (this.state.currentText > 0)
+                          this.setState({
+                            currentText: this.state.currentText - 1,
+                          });
                       }}
-                      placeholder='Text'
-                      onChange={(event) => {
-                        if (
-                          event.target.value !== '' &&
-                          /\S/.test(event.target.value)
-                        ) {
-                          this.setState({ text: event.target.value });
-                        } else {
-                          event.preventDefault();
-                        }
-                      }}
-                      style={{ display: 'inline-block' }}
-                      value={this.state.text}
-                    />
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='color' style={{ color: 'white' }}>
-                      Color:
-                    </label>
-                    <input
-                      type='color'
-                      className='form-control'
-                      name='color'
-                      ref={(node) => {
-                        color = node;
-                      }}
-                      placeholder='Color'
-                      onChange={(event) =>
-                        this.setState({ color: event.target.value })
+                      variant={
+                        this.state.currentText > 0 ? 'danger' : 'outline-danger'
                       }
-                      value={this.state.color}
-                    />
+                      style={{ textAlign: 'center' }}
+                    >
+                      {'<'}
+                    </Button>
+                    <Button
+                      style={{ marginLeft: '25px', marginRight: '25px' }}
+                      variant='success'
+                      onClick={() => {
+                        let newText = {
+                          id:
+                            this.state.texts.length === 0
+                              ? 1
+                              : this.state.texts[this.state.texts.length - 1]
+                                  .id + 1,
+                          text: 'GoLogoLo Logod',
+                          color: '#FF0000',
+                          fontSize: 25,
+                          x: 0,
+                          y: 0,
+                          zIndex: 0,
+                        };
+                        let newTexts = [...this.state.texts];
+                        newTexts.push(newText);
+                        this.setState({
+                          texts: newTexts,
+                          currentText: this.state.currentText + 1,
+                        });
+                      }}
+                    >
+                      Add text
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          this.state.texts.length > 1 &&
+                          this.state.currentText !== this.state.texts.length - 1
+                        )
+                          this.setState({
+                            currentText: this.state.currentText + 1,
+                          });
+                      }}
+                      variant={
+                        this.state.texts.length > 1 &&
+                        this.state.currentText !== this.state.texts.length - 1
+                          ? 'danger'
+                          : 'outline-danger'
+                      }
+                      style={{ textAlign: 'center' }}
+                    >
+                      {'>'}
+                    </Button>
                   </div>
                   <div className='form-group'>
                     <label htmlFor='fontSize' style={{ color: 'white' }}>
-                      Font Size: {this.state.fontSize}
+                      Logo Dimensions
                     </label>
-                    <input
-                      type='range'
-                      className='custom-range'
-                      name='fontSize'
-                      ref={(node) => {
-                        fontSize = node;
-                      }}
-                      min='1'
-                      max='100'
-                      style={{
-                        border: 'transparent',
-                        backgroundColor: 'transparent',
-                      }}
-                      step='1'
-                      value={this.state.fontSize}
-                      id='fontSizeSlider'
-                      onChange={(event) =>
-                        this.setState({ fontSize: event.target.value })
-                      }
-                    />
+                  </div>
+                  <div className='form-group'>
+                    <label htmlFor='fontSize' style={{ color: 'white' }}>
+                      Height: {this.state.height} px
+                    </label>
+                  </div>
+                  <div className='form-group'>
+                    <label htmlFor='fontSize' style={{ color: 'white' }}>
+                      Width: {this.state.width} px
+                    </label>
                   </div>
                   <div className='form-group'>
                     <label htmlFor='color' style={{ color: 'white' }}>
@@ -329,15 +542,49 @@ class CreateLogoScreen extends Component {
               </div>
             </div>
             <LogoWorkspace
-              text={this.state.text}
+              texts={this.state.texts}
               color={this.state.color}
-              fontSize={this.state.fontSize}
               backgroundColor={this.state.backgroundColor}
               borderColor={this.state.borderColor}
               borderRadius={this.state.borderRadius}
               borderWidth={this.state.borderWidth}
               padding={this.state.padding}
               margin={this.state.margin}
+              height={this.state.height}
+              width={this.state.width}
+              onResize={(event, { element, size, handle }) => {
+                const oldHeight = this.state.height;
+                const oldWidth = this.state.width;
+                this.setState({ width: size.width });
+                this.setState({ height: size.height });
+                this.setState({ bounds: 'parent' });
+                const newTexts = [...this.state.texts];
+                newTexts.forEach((text) => {
+                  const adjustX = oldWidth - size.width;
+                  const adjustY = oldHeight - size.height;
+                  if (text.x !== 0 && text.x > 0) {
+                    text.x -= adjustX;
+                  } else {
+                    text.x = 0;
+                  }
+                  if (text.y !== 0 && text.y > 0) {
+                    text.y -= adjustY;
+                  } else {
+                    text.y = 0;
+                  }
+                });
+              }}
+              onDrag={(event, position, text) => {
+                const newTexts = [...this.state.texts];
+                const index = newTexts.indexOf(text);
+                newTexts[index] = { ...text };
+                newTexts[index].x = position.x;
+                newTexts[index].y = position.y;
+                this.setState({ texts: newTexts });
+              }}
+              rePosition={(newTexts) => {
+                this.setState({ texts: newTexts });
+              }}
             ></LogoWorkspace>
           </div>
         )}

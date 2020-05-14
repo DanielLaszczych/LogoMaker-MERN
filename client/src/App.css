@@ -4,12 +4,12 @@
       COLORS THAT WE'LL USE TOGETHER IN MULTIPLE PLACES THAT
       TOGETHER WILL MAKE UP A GIVEN THEME
   */
-  --swatch-foundation:    #EEEEDD; /* USED FOR BODY BACKGROUND */
-  --swatch-primary:       #E6E6E6; /* DOMINANT COLOR, USED FOR MOST BACKGROUNDS */
-  --swatch-complement:    #E1E4CB; /* USED IN FORGROUND OF PRIMARY FOR TEXT AND BORDERS */
-  --swatch_contrast:      #111111; /* USED IN MOUSE-OVER SELECTION OF LARGE ELEMENTS */
-  --swatch-accent:        #669966; /* USED IN MOUSE-OVER SELECTION OF TEXT AND BORDERS */    
-  --my-font-family:          "Robaaaoto";
+  --swatch-foundation: #eeeedd; /* USED FOR BODY BACKGROUND */
+  --swatch-primary: #e6e6e6; /* DOMINANT COLOR, USED FOR MOST BACKGROUNDS */
+  --swatch-complement: #e1e4cb; /* USED IN FORGROUND OF PRIMARY FOR TEXT AND BORDERS */
+  --swatch_contrast: #111111; /* USED IN MOUSE-OVER SELECTION OF LARGE ELEMENTS */
+  --swatch-accent: #669966; /* USED IN MOUSE-OVER SELECTION OF TEXT AND BORDERS */
+  --my-font-family: 'Robaaaoto';
   --bounceEasing: cubic-bezier(0.51, 0.92, 0.24, 1.15);
 }
 
@@ -19,8 +19,7 @@ body {
 }
 
 #home_banner_container {
-  background-image: linear-gradient(to bottom,         
-  #b8b808, #636723);
+  background-image: linear-gradient(to bottom, #b8b808, #636723);
   color: white;
   font-size: 48pt;
   border-color: black;
@@ -30,4 +29,70 @@ body {
   padding-left: 10%;
   padding-top: 5%;
   padding-bottom: 5%;
+}
+
+.react-resizable {
+  position: relative;
+}
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+}
+.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+  transform: rotate(90deg);
+}
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  transform: rotate(180deg);
+}
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  transform: rotate(270deg);
+}
+.react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 50%;
+  margin-top: -10px;
+  cursor: ew-resize;
+}
+.react-resizable-handle-w {
+  left: 0;
+  transform: rotate(135deg);
+}
+.react-resizable-handle-e {
+  right: 0;
+  transform: rotate(315deg);
+}
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  left: 50%;
+  margin-left: -10px;
+  cursor: ns-resize;
+}
+.react-resizable-handle-n {
+  top: 0;
+  transform: rotate(225deg);
+}
+.react-resizable-handle-s {
+  bottom: 0;
+  transform: rotate(45deg);
 }
