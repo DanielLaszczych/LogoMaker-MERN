@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Rnd } from 'react-rnd';
 import { Resizable, ResizableBox } from 'react-resizable';
 import Draggable from 'react-draggable';
 import '../App.css';
@@ -63,7 +64,67 @@ class LogoWorkspace extends Component {
         }
         newTexts.push(newText);
       });
-      this.props.rePosition(newTexts);
+      let newImages = [];
+      this.props.images.forEach((image) => {
+        let newImage = { ...image };
+        let sumWidth = document.getElementById(image.id + 'image').offsetWidth;
+        let sumHeight = document.getElementById(image.id + 'image')
+          .offsetHeight;
+        if (
+          sumWidth + image.x >
+            this.props.width -
+              (this.props.padding + this.props.borderWidth) -
+              1.5 ||
+          sumWidth + image.x >
+            this.props.width -
+              (this.props.padding + this.props.borderWidth) +
+              1.5
+        ) {
+          console.log('working');
+          console.log(this.props.borderWidth);
+          newImage.x =
+            image.x -
+            (this.props.padding +
+              this.props.borderWidth -
+              (prevProps.padding + prevProps.borderWidth));
+        } else if (
+          image.x < this.props.padding + this.props.borderWidth - 1.5 ||
+          image.x < this.props.padding + this.props.borderWidth + 1.5
+        ) {
+          newImage.x =
+            image.x +
+            (this.props.padding +
+              this.props.borderWidth -
+              (prevProps.padding + prevProps.borderWidth));
+        }
+        if (
+          sumHeight + image.y >
+            this.props.height -
+              (this.props.padding + this.props.borderWidth) -
+              1.5 ||
+          sumHeight + image.y >
+            this.props.height -
+              (this.props.padding + this.props.borderWidth) +
+              1.5
+        ) {
+          newImage.y =
+            image.y -
+            (this.props.padding +
+              this.props.borderWidth -
+              (prevProps.padding + prevProps.borderWidth));
+        } else if (
+          image.y < this.props.padding + this.props.borderWidth - 1.5 ||
+          image.y < this.props.padding + this.props.borderWidth + 1.5
+        ) {
+          newImage.y =
+            image.y +
+            (this.props.padding +
+              this.props.borderWidth -
+              (prevProps.padding + prevProps.borderWidth));
+        }
+        newImages.push(newImage);
+      });
+      this.props.rePosition(newTexts, newImages);
     }
   }
 
@@ -105,7 +166,9 @@ class LogoWorkspace extends Component {
               <Draggable
                 key={text.id + 'Draggable'}
                 bounds='parent'
-                onDrag={(e, position) => this.props.onDrag(e, position, text)}
+                onDrag={(e, position) =>
+                  this.props.onDragText(e, position, text)
+                }
                 position={{ x: text.x, y: text.y }}
               >
                 <div
@@ -123,6 +186,38 @@ class LogoWorkspace extends Component {
                   {text.text}
                 </div>
               </Draggable>
+            ))}
+            {this.props.images.map((image) => (
+              <Rnd
+                bounds='parent'
+                key={image.id + 'rnd'}
+                size={{ width: image.width, height: image.height }}
+                position={{ x: image.x, y: image.y }}
+                onDragStop={(e, d) =>
+                  this.props.onDragImage(e, d, image, image.width, image.height)
+                }
+                onResize={(e, direction, ref, delta, position) =>
+                  this.props.onResizeImage(
+                    e,
+                    direction,
+                    ref,
+                    delta,
+                    position,
+                    image
+                  )
+                }
+              >
+                <img
+                  id={image.id + 'image'}
+                  draggable={false}
+                  src={image.src}
+                  style={{
+                    height: image.height,
+                    width: image.width,
+                    position: 'absolute',
+                  }}
+                />
+              </Rnd>
             ))}
           </div>
         </ResizableBox>

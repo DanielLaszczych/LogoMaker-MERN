@@ -7,6 +7,7 @@ var GraphQLID = require('graphql').GraphQLID;
 var GraphQLString = require('graphql').GraphQLString;
 var GraphQLInt = require('graphql').GraphQLInt;
 var GraphQLDate = require('graphql-date');
+var GraphQLList = require('graphql').GraphQLList;
 var LogoModel = require('../models/Logo');
 
 var logoType = new GraphQLObjectType({

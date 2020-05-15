@@ -41,13 +41,13 @@ class CreateLogoScreen extends Component {
     borderWidth: 5,
     padding: 10,
     margin: 5,
-    height: 100,
+    height: 200,
     width: 400,
     currentText: 0,
     texts: [
       {
         id: 1,
-        text: 'GoLogoLo Logod',
+        text: 'GoLogoLo Logo',
         color: '#FF0000',
         fontSize: 25,
         x: 0,
@@ -55,6 +55,8 @@ class CreateLogoScreen extends Component {
         zIndex: 0,
       },
     ],
+    currentImage: -1,
+    images: [],
   };
 
   render() {
@@ -147,6 +149,23 @@ class CreateLogoScreen extends Component {
                     margin.value = '';
                   }}
                 >
+                  <div className='form-group'>
+                    <div>
+                      <label htmlFor='fontSize' style={{ color: 'white' }}>
+                        Logo Dimensions
+                      </label>
+                    </div>
+                    <div>
+                      <label htmlFor='fontSize' style={{ color: 'white' }}>
+                        Height: {this.state.height} px
+                      </label>
+                    </div>
+                    <div>
+                      <label htmlFor='fontSize' style={{ color: 'white' }}>
+                        Width: {this.state.width} px
+                      </label>
+                    </div>
+                  </div>
                   {this.state.texts.length > 0 ? (
                     <React.Fragment>
                       <div className='form-group'>
@@ -319,7 +338,7 @@ class CreateLogoScreen extends Component {
                             }
                             let newCurrentText = 0;
                             if (this.state.texts.length === 1) {
-                              newCurrentText = 0;
+                              newCurrentText = -1;
                             } else if (
                               this.state.texts.length > 1 &&
                               this.state.currentText === 0
@@ -402,20 +421,202 @@ class CreateLogoScreen extends Component {
                       {'>'}
                     </Button>
                   </div>
-                  <div className='form-group'>
-                    <label htmlFor='fontSize' style={{ color: 'white' }}>
-                      Logo Dimensions
-                    </label>
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='fontSize' style={{ color: 'white' }}>
-                      Height: {this.state.height} px
-                    </label>
-                  </div>
-                  <div className='form-group'>
-                    <label htmlFor='fontSize' style={{ color: 'white' }}>
-                      Width: {this.state.width} px
-                    </label>
+                  {this.state.images.length > 0 ? (
+                    <React.Fragment>
+                      <div className='form-group'>
+                        <label
+                          htmlFor='text'
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          Image: #
+                          {this.state.images[this.state.currentImage].id}
+                        </label>
+                        <input
+                          type='text'
+                          className='form-control'
+                          name='text'
+                          placeholder='Text'
+                          onChange={(event) => {
+                            const newImages = [...this.state.images];
+                            const index = newImages.indexOf(
+                              this.state.images[this.state.currentImage]
+                            );
+                            newImages[index] = {
+                              ...this.state.images[this.state.currentImage],
+                            };
+                            newImages[index].src = event.target.value;
+                            this.setState({ images: newImages });
+                          }}
+                          value={this.state.images[this.state.currentImage].src}
+                        />
+                      </div>
+                      <div className='form-group'>
+                        <label
+                          htmlFor='text'
+                          style={{
+                            color: 'white',
+                          }}
+                        >
+                          Priority:{' '}
+                          {this.state.images[this.state.currentImage].zIndex}
+                        </label>
+                        <div style={{ textAlign: 'center' }}>
+                          <Button
+                            onClick={() => {
+                              if (
+                                this.state.images[this.state.currentImage]
+                                  .zIndex > 0
+                              ) {
+                                const newImages = [...this.state.images];
+                                const index = newImages.indexOf(
+                                  this.state.images[this.state.currentImage]
+                                );
+                                newImages[index] = {
+                                  ...this.state.images[this.state.currentImage],
+                                };
+                                newImages[index].zIndex =
+                                  this.state.images[this.state.currentImage]
+                                    .zIndex - 1;
+                                this.setState({ images: newImages });
+                              }
+                            }}
+                            variant={
+                              this.state.images[this.state.currentImage]
+                                .zIndex === 0
+                                ? 'outline-success'
+                                : 'success'
+                            }
+                            style={{ width: '30%', marginRight: '10px' }}
+                          >
+                            Down
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              const newImages = [...this.state.images];
+                              const index = newImages.indexOf(
+                                this.state.images[this.state.currentImage]
+                              );
+                              newImages[index] = {
+                                ...this.state.images[this.state.currentImage],
+                              };
+                              newImages[index].zIndex =
+                                this.state.images[this.state.currentImage]
+                                  .zIndex + 1;
+                              this.setState({ images: newImages });
+                            }}
+                            variant='success'
+                            style={{ width: '30%', marginLeft: '10px' }}
+                          >
+                            Up
+                          </Button>
+                        </div>
+                      </div>
+                      <div
+                        className='form-group'
+                        style={{ textAlign: 'center' }}
+                      >
+                        <Button
+                          variant='danger'
+                          onClick={() => {
+                            const newImages = [...this.state.images];
+                            newImages.splice(this.state.currentImage, 1);
+                            for (
+                              let i = this.state.currentImage;
+                              i < newImages.length;
+                              i++
+                            ) {
+                              newImages[i].id = newImages[i].id - 1;
+                            }
+                            let newCurrentImage = 0;
+                            if (this.state.images.length === 1) {
+                              newCurrentImage = -1;
+                            } else if (
+                              this.state.images.length > 1 &&
+                              this.state.currentImage === 0
+                            ) {
+                              newCurrentImage = 0;
+                            } else {
+                              newCurrentImage = this.state.currentImage - 1;
+                            }
+                            this.setState({
+                              images: newImages,
+                              currentImage: newCurrentImage,
+                            });
+                          }}
+                        >
+                          Remove image
+                        </Button>
+                      </div>
+                    </React.Fragment>
+                  ) : null}
+                  <div className='form-group' style={{ textAlign: 'center' }}>
+                    <Button
+                      onClick={() => {
+                        if (this.state.currentImage > 0)
+                          this.setState({
+                            currentImage: this.state.currentImage - 1,
+                          });
+                      }}
+                      variant={
+                        this.state.currentImage > 0
+                          ? 'danger'
+                          : 'outline-danger'
+                      }
+                      style={{ textAlign: 'center' }}
+                    >
+                      {'<'}
+                    </Button>
+                    <Button
+                      style={{ marginLeft: '25px', marginRight: '25px' }}
+                      variant='success'
+                      onClick={() => {
+                        let newImage = {
+                          id:
+                            this.state.images.length === 0
+                              ? 1
+                              : this.state.images[this.state.images.length - 1]
+                                  .id + 1,
+                          src:
+                            'https://www.amerikickkansas.com/wp-content/uploads/2017/04/default-image.jpg',
+                          height: 100,
+                          width: 100,
+                          x: this.state.padding + this.state.borderWidth,
+                          y: this.state.padding + this.state.borderWidth,
+                          zIndex: 0,
+                        };
+                        let newImages = [...this.state.images];
+                        newImages.push(newImage);
+                        this.setState({
+                          images: newImages,
+                          currentImage: this.state.currentImage + 1,
+                        });
+                      }}
+                    >
+                      Add image
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        if (
+                          this.state.images.length > 1 &&
+                          this.state.currentImage !==
+                            this.state.images.length - 1
+                        )
+                          this.setState({
+                            currentImage: this.state.currentImage + 1,
+                          });
+                      }}
+                      variant={
+                        this.state.images.length > 1 &&
+                        this.state.currentImage !== this.state.images.length - 1
+                          ? 'danger'
+                          : 'outline-danger'
+                      }
+                      style={{ textAlign: 'center' }}
+                    >
+                      {'>'}
+                    </Button>
                   </div>
                   <div className='form-group'>
                     <label htmlFor='color' style={{ color: 'white' }}>
@@ -489,7 +690,9 @@ class CreateLogoScreen extends Component {
                       step='1'
                       value={this.state.borderWidth}
                       onChange={(event) =>
-                        this.setState({ borderWidth: event.target.value })
+                        this.setState({
+                          borderWidth: parseInt(event.target.value),
+                        })
                       }
                     />
                   </div>
@@ -509,7 +712,7 @@ class CreateLogoScreen extends Component {
                       step='1'
                       value={this.state.padding}
                       onChange={(event) =>
-                        this.setState({ padding: event.target.value })
+                        this.setState({ padding: parseInt(event.target.value) })
                       }
                     />
                   </div>
@@ -543,12 +746,13 @@ class CreateLogoScreen extends Component {
             </div>
             <LogoWorkspace
               texts={this.state.texts}
+              images={this.state.images}
               color={this.state.color}
               backgroundColor={this.state.backgroundColor}
               borderColor={this.state.borderColor}
               borderRadius={this.state.borderRadius}
-              borderWidth={this.state.borderWidth}
-              padding={this.state.padding}
+              borderWidth={parseInt(this.state.borderWidth)}
+              padding={parseInt(this.state.padding)}
               margin={this.state.margin}
               height={this.state.height}
               width={this.state.width}
@@ -573,8 +777,31 @@ class CreateLogoScreen extends Component {
                     text.y = 0;
                   }
                 });
+                const newImages = [...this.state.images];
+                newImages.forEach((image) => {
+                  const adjustX = oldWidth - size.width;
+                  const adjustY = oldHeight - size.height;
+                  if (image.x !== 0 && image.x > 0) {
+                    image.x -= adjustX;
+                  } else {
+                    image.x = 0;
+                  }
+                  if (image.y !== 0 && image.y > 0) {
+                    image.y -= adjustY;
+                  } else {
+                    image.y = 0;
+                  }
+                });
               }}
-              onDrag={(event, position, text) => {
+              onResizeImage={(e, direction, ref, delta, position, image) => {
+                const newImages = [...this.state.images];
+                const index = newImages.indexOf(image);
+                newImages[index] = { ...image };
+                newImages[index].height = ref.offsetHeight;
+                newImages[index].width = ref.offsetWidth;
+                this.setState({ images: newImages });
+              }}
+              onDragText={(event, position, text) => {
                 const newTexts = [...this.state.texts];
                 const index = newTexts.indexOf(text);
                 newTexts[index] = { ...text };
@@ -582,8 +809,77 @@ class CreateLogoScreen extends Component {
                 newTexts[index].y = position.y;
                 this.setState({ texts: newTexts });
               }}
-              rePosition={(newTexts) => {
-                this.setState({ texts: newTexts });
+              onDragImage={(
+                event,
+                position,
+                image,
+                imageWidth,
+                imageHeight
+              ) => {
+                const newImages = [...this.state.images];
+                const index = newImages.indexOf(image);
+                newImages[index] = { ...image };
+                let sumWidth = imageWidth;
+                let sumHeight = imageHeight;
+                let newX = position.x;
+                let newY = position.y;
+                if (
+                  sumWidth + position.x >
+                    this.state.width -
+                      (this.state.padding + this.state.borderWidth) -
+                      1.5 ||
+                  sumWidth + position.x >
+                    this.state.width -
+                      (this.state.padding + this.state.borderWidth) +
+                      1.5
+                ) {
+                  newX =
+                    position.x -
+                    (position.x +
+                      imageWidth +
+                      this.state.padding +
+                      this.state.borderWidth -
+                      this.state.width);
+                } else if (
+                  position.x <
+                    this.state.padding + this.state.borderWidth - 1.5 ||
+                  position.x < this.state.padding + this.state.borderWidth + 1.5
+                ) {
+                  console.log('working x');
+                  newX =
+                    position.x + this.state.padding + this.state.borderWidth;
+                }
+                if (
+                  sumHeight + position.y >
+                    this.state.height -
+                      (this.state.padding + this.state.borderWidth) -
+                      1.5 ||
+                  sumHeight + position.y >
+                    this.state.height -
+                      (this.state.padding + this.state.borderWidth) +
+                      1.5
+                ) {
+                  newY =
+                    position.y -
+                    (position.y +
+                      imageHeight +
+                      this.state.padding +
+                      this.state.borderWidth -
+                      this.state.height);
+                } else if (
+                  position.y <
+                    this.state.padding + this.state.borderWidth - 1.5 ||
+                  position.y < this.state.padding + this.state.borderWidth + 1.5
+                ) {
+                  newY =
+                    position.y + this.state.padding + this.state.borderWidth;
+                }
+                newImages[index].x = newX;
+                newImages[index].y = newY;
+                this.setState({ images: newImages });
+              }}
+              rePosition={(newTexts, newImages) => {
+                this.setState({ texts: newTexts, images: newImages });
               }}
             ></LogoWorkspace>
           </div>
