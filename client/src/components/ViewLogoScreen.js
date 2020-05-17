@@ -5,14 +5,33 @@ import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
 import LogoWorkspace from './LogoWorkspace';
 import DeleteModal from './DeleteModal';
+import Button from 'react-bootstrap/Button';
 
 const GET_LOGO = gql`
   query logo($logoId: String) {
     logo(id: $logoId) {
       _id
-      text
-      color
-      fontSize
+      logoName
+      height
+      width
+      texts {
+        id
+        text
+        color
+        fontSize
+        x
+        y
+        zIndex
+      }
+      images {
+        id
+        src
+        height
+        width
+        x
+        y
+        zIndex
+      }
       backgroundColor
       borderColor
       borderRadius
@@ -35,10 +54,11 @@ const DELETE_LOGO = gql`
 class ViewLogoScreen extends Component {
   state = {
     deleteModalVisible: false,
+    currentText: 0,
+    currentImage: 0,
   };
 
   deleteModalVisibility = (visibility) => {
-    console.log('working');
     this.setState({ deleteModalVisible: visibility });
   };
 
@@ -102,18 +122,143 @@ class ViewLogoScreen extends Component {
                     View Logo
                   </h3>
                   <dl>
-                    <dt style={{ color: 'white' }}>Text:</dt>
+                    <dt style={{ color: 'white' }}>Logo Name:</dt>
                     <dd style={{ color: 'white', marginBottom: '20px' }}>
-                      {data.logo.text}
+                      {data.logo.logoName}
                     </dd>
-                    <dt style={{ color: 'white' }}>Color:</dt>
+                    <dt style={{ color: 'white' }}>Logo Dimensions:</dt>
+                    <dt style={{ color: 'white' }}>Height:</dt>
                     <dd style={{ color: 'white', marginBottom: '20px' }}>
-                      {data.logo.color}
+                      {data.logo.height}
                     </dd>
-                    <dt style={{ color: 'white' }}>Font Size:</dt>
+                    <dt style={{ color: 'white' }}>Width:</dt>
                     <dd style={{ color: 'white', marginBottom: '20px' }}>
-                      {data.logo.fontSize} pixels
+                      {data.logo.width}
                     </dd>
+                    {data.logo.texts.length > 0 ? (
+                      <React.Fragment>
+                        <dt style={{ color: 'white' }}>
+                          Text #{data.logo.texts[this.state.currentText].id}
+                        </dt>
+                        <dt style={{ color: 'white' }}>Text:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.texts[this.state.currentText].text}
+                        </dd>
+                        <dt style={{ color: 'white' }}>Priority:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.texts[this.state.currentText].zIndex}
+                        </dd>
+                        <dt style={{ color: 'white' }}>Font Size:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.texts[this.state.currentText].fontSize}
+                        </dd>
+                        <dt style={{ color: 'white' }}>Color:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.texts[this.state.currentText].color}
+                        </dd>
+                        <div
+                          className='form-group'
+                          style={{ textAlign: 'center' }}
+                        >
+                          <Button
+                            onClick={() => {
+                              if (this.state.currentText > 0)
+                                this.setState({
+                                  currentText: this.state.currentText - 1,
+                                });
+                            }}
+                            variant={
+                              this.state.currentText > 0
+                                ? 'danger'
+                                : 'outline-danger'
+                            }
+                            style={{ textAlign: 'center' }}
+                          >
+                            {'<'}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (
+                                data.logo.texts.length > 1 &&
+                                this.state.currentText !==
+                                  data.logo.texts.length - 1
+                              )
+                                this.setState({
+                                  currentText: this.state.currentText + 1,
+                                });
+                            }}
+                            variant={
+                              data.logo.texts.length > 1 &&
+                              this.state.currentText !==
+                                data.logo.texts.length - 1
+                                ? 'danger'
+                                : 'outline-danger'
+                            }
+                            style={{ textAlign: 'center' }}
+                          >
+                            {'>'}
+                          </Button>
+                        </div>
+                      </React.Fragment>
+                    ) : null}
+                    {data.logo.images.length > 0 ? (
+                      <React.Fragment>
+                        <dt style={{ color: 'white' }}>
+                          Image #{data.logo.images[this.state.currentImage].id}
+                        </dt>
+                        <dt style={{ color: 'white' }}>Src:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.images[this.state.currentImage].src}
+                        </dd>
+                        <dt style={{ color: 'white' }}>Priority:</dt>
+                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                          {data.logo.images[this.state.currentImage].zIndex}
+                        </dd>
+                        <div
+                          className='form-group'
+                          style={{ textAlign: 'center' }}
+                        >
+                          <Button
+                            onClick={() => {
+                              if (this.state.currentImage > 0)
+                                this.setState({
+                                  currentImage: this.state.currentImage - 1,
+                                });
+                            }}
+                            variant={
+                              this.state.currentImage > 0
+                                ? 'danger'
+                                : 'outline-danger'
+                            }
+                            style={{ textAlign: 'center' }}
+                          >
+                            {'<'}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              if (
+                                data.logo.images.length > 1 &&
+                                this.state.currentImage !==
+                                  data.logo.images.length - 1
+                              )
+                                this.setState({
+                                  currentImage: this.state.currentImage + 1,
+                                });
+                            }}
+                            variant={
+                              data.logo.images.length > 1 &&
+                              this.state.currentImage !==
+                                data.logo.images.length - 1
+                                ? 'danger'
+                                : 'outline-danger'
+                            }
+                            style={{ textAlign: 'center' }}
+                          >
+                            {'>'}
+                          </Button>
+                        </div>
+                      </React.Fragment>
+                    ) : null}
                     <dt style={{ color: 'white' }}>Background Color:</dt>
                     <dd style={{ color: 'white', marginBottom: '20px' }}>
                       {data.logo.backgroundColor}
@@ -182,15 +327,17 @@ class ViewLogoScreen extends Component {
                 </div>
               </div>
               <LogoWorkspace
-                text={data.logo.text}
-                color={data.logo.color}
-                fontSize={data.logo.fontSize}
+                texts={data.logo.texts}
+                images={data.logo.images}
                 backgroundColor={data.logo.backgroundColor}
                 borderColor={data.logo.borderColor}
                 borderRadius={data.logo.borderRadius}
                 borderWidth={data.logo.borderWidth}
                 padding={data.logo.padding}
                 margin={data.logo.margin}
+                height={data.logo.height}
+                width={data.logo.width}
+                disabledEditing={true}
               ></LogoWorkspace>
             </div>
           );

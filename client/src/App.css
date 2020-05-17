@@ -31,6 +31,10 @@ body {
   padding-bottom: 5%;
 }
 
+.container {
+  width: 100%;
+}
+
 .react-resizable {
   position: relative;
 }

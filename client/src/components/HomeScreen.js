@@ -8,7 +8,7 @@ const GET_LOGOS = gql`
   {
     logos {
       _id
-      text
+      logoName
       lastUpdate
     }
   }
@@ -22,7 +22,6 @@ class HomeScreen extends Component {
           if (loading) return 'Loading...';
           if (error) return `Error! ${error.message}`;
 
-          console.log(data.logos);
           return (
             <div
               className='container row'
@@ -62,7 +61,7 @@ class HomeScreen extends Component {
                           fontSize: '120%',
                         }}
                       >
-                        {logo.text}
+                        {logo.logoName}
                       </Link>
                     </div>
                   ))}

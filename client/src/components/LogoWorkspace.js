@@ -80,8 +80,6 @@ class LogoWorkspace extends Component {
               (this.props.padding + this.props.borderWidth) +
               1.5
         ) {
-          console.log('working');
-          console.log(this.props.borderWidth);
           newImage.x =
             image.x -
             (this.props.padding +
@@ -134,12 +132,13 @@ class LogoWorkspace extends Component {
         style={{
           display: 'inline-block',
           verticalAlign: 'top',
-          position: 'absolute',
+          position: 'fixed',
           marginTop: '120px',
           marginLeft: '150px',
         }}
       >
         <ResizableBox
+          axis={this.props.disabledEditing ? 'none' : 'both'}
           minConstraints={[60, 60]}
           height={this.props.height}
           width={this.props.width}
@@ -164,6 +163,7 @@ class LogoWorkspace extends Component {
           >
             {this.props.texts.map((text) => (
               <Draggable
+                disabled={this.props.disabledEditing}
                 key={text.id + 'Draggable'}
                 bounds='parent'
                 onDrag={(e, position) =>
@@ -189,6 +189,8 @@ class LogoWorkspace extends Component {
             ))}
             {this.props.images.map((image) => (
               <Rnd
+                disableDragging={this.props.disabledEditing}
+                dragAxis={this.props.disabledEditing ? 'none' : 'both'}
                 bounds='parent'
                 key={image.id + 'rnd'}
                 size={{ width: image.width, height: image.height }}
@@ -205,6 +207,29 @@ class LogoWorkspace extends Component {
                     position,
                     image
                   )
+                }
+                enableResizing={
+                  this.props.disabledEditing
+                    ? {
+                        top: false,
+                        right: false,
+                        bottom: false,
+                        left: false,
+                        topRight: false,
+                        bottomRight: false,
+                        bottomLeft: false,
+                        topLeft: false,
+                      }
+                    : {
+                        top: true,
+                        right: true,
+                        bottom: true,
+                        left: true,
+                        topRight: true,
+                        bottomRight: true,
+                        bottomLeft: true,
+                        topLeft: true,
+                      }
                 }
               >
                 <img

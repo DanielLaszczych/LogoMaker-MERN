@@ -7,9 +7,11 @@ import Button from 'react-bootstrap/Button';
 
 const ADD_LOGO = gql`
   mutation AddLogo(
-    $text: String!
-    $color: String!
-    $fontSize: Int!
+    $logoName: String!
+    $height: Int!
+    $width: Int!
+    $texts: [text!]!
+    $images: [image!]!
     $backgroundColor: String!
     $borderColor: String!
     $borderRadius: Int!
@@ -18,9 +20,11 @@ const ADD_LOGO = gql`
     $margin: Int!
   ) {
     addLogo(
-      text: $text
-      color: $color
-      fontSize: $fontSize
+      logoName: $logoName
+      height: $height
+      width: $width
+      texts: $texts
+      images: $images
       backgroundColor: $backgroundColor
       borderColor: $borderColor
       borderRadius: $borderRadius
@@ -35,6 +39,7 @@ const ADD_LOGO = gql`
 
 class CreateLogoScreen extends Component {
   state = {
+    logoName: 'GoLogoLo Logo',
     backgroundColor: '#32CD32',
     borderColor: '#000000',
     borderRadius: 5,
@@ -50,19 +55,28 @@ class CreateLogoScreen extends Component {
         text: 'GoLogoLo Logo',
         color: '#FF0000',
         fontSize: 25,
+        x: 0.0,
+        y: 0.0,
+        zIndex: 0,
+      },
+    ],
+    currentImage: 0,
+    images: [
+      {
+        id: 1,
+        src:
+          'https://www.amerikickkansas.com/wp-content/uploads/2017/04/default-image.jpg',
+        height: 100,
+        width: 100,
         x: 0,
         y: 0,
         zIndex: 0,
       },
     ],
-    currentImage: -1,
-    images: [],
   };
 
   render() {
-    let text,
-      color,
-      fontSize,
+    let logoName,
       backgroundColor,
       borderColor,
       borderRadius,
@@ -127,9 +141,11 @@ class CreateLogoScreen extends Component {
                     e.preventDefault();
                     addLogo({
                       variables: {
-                        text: text.value,
-                        color: color.value,
-                        fontSize: parseInt(fontSize.value),
+                        logoName: logoName.value,
+                        height: this.state.height,
+                        width: this.state.width,
+                        texts: this.state.texts,
+                        images: this.state.images,
                         backgroundColor: backgroundColor.value,
                         borderColor: borderColor.value,
                         borderRadius: parseInt(borderRadius.value),
@@ -138,9 +154,11 @@ class CreateLogoScreen extends Component {
                         margin: parseInt(margin.value),
                       },
                     });
-                    text.value = '';
-                    color.value = '';
-                    fontSize.value = '';
+                    this.setState({ texts: [] });
+                    this.setState({ images: [] });
+                    this.setState({ height: 60 });
+                    this.setState({ width: 60 });
+                    logoName.value = '';
                     backgroundColor.value = '';
                     borderColor.value = '';
                     borderRadius.value = '';
@@ -149,6 +167,32 @@ class CreateLogoScreen extends Component {
                     margin.value = '';
                   }}
                 >
+                  <div className='form-group'>
+                    <label htmlFor='text' style={{ color: 'white' }}>
+                      Logo Name:
+                    </label>
+                    <input
+                      type='text'
+                      className='form-control'
+                      name='logoName'
+                      ref={(node) => {
+                        logoName = node;
+                      }}
+                      placeholder='Logo Name'
+                      onChange={(event) => {
+                        if (
+                          event.target.value !== '' &&
+                          /\S/.test(event.target.value)
+                        ) {
+                          this.setState({ logoName: event.target.value });
+                        } else {
+                          event.preventDefault();
+                        }
+                      }}
+                      style={{ display: 'inline-block' }}
+                      value={this.state.logoName}
+                    />
+                  </div>
                   <div className='form-group'>
                     <div>
                       <label htmlFor='fontSize' style={{ color: 'white' }}>
@@ -183,22 +227,15 @@ class CreateLogoScreen extends Component {
                           name='text'
                           placeholder='Text'
                           onChange={(event) => {
-                            if (
-                              event.target.value !== '' &&
-                              /\S/.test(event.target.value)
-                            ) {
-                              const newTexts = [...this.state.texts];
-                              const index = newTexts.indexOf(
-                                this.state.texts[this.state.currentText]
-                              );
-                              newTexts[index] = {
-                                ...this.state.texts[this.state.currentText],
-                              };
-                              newTexts[index].text = event.target.value;
-                              this.setState({ texts: newTexts });
-                            } else {
-                              event.preventDefault();
-                            }
+                            const newTexts = [...this.state.texts];
+                            const index = newTexts.indexOf(
+                              this.state.texts[this.state.currentText]
+                            );
+                            newTexts[index] = {
+                              ...this.state.texts[this.state.currentText],
+                            };
+                            newTexts[index].text = event.target.value;
+                            this.setState({ texts: newTexts });
                           }}
                           value={this.state.texts[this.state.currentText].text}
                         />
@@ -383,7 +420,7 @@ class CreateLogoScreen extends Component {
                               ? 1
                               : this.state.texts[this.state.texts.length - 1]
                                   .id + 1,
-                          text: 'GoLogoLo Logod',
+                          text: 'GoLogoLo Logo',
                           color: '#FF0000',
                           fontSize: 25,
                           x: 0,
@@ -747,7 +784,6 @@ class CreateLogoScreen extends Component {
             <LogoWorkspace
               texts={this.state.texts}
               images={this.state.images}
-              color={this.state.color}
               backgroundColor={this.state.backgroundColor}
               borderColor={this.state.borderColor}
               borderRadius={this.state.borderRadius}
@@ -756,6 +792,7 @@ class CreateLogoScreen extends Component {
               margin={this.state.margin}
               height={this.state.height}
               width={this.state.width}
+              disabledEditing={false}
               onResize={(event, { element, size, handle }) => {
                 const oldHeight = this.state.height;
                 const oldWidth = this.state.width;
@@ -845,7 +882,6 @@ class CreateLogoScreen extends Component {
                     this.state.padding + this.state.borderWidth - 1.5 ||
                   position.x < this.state.padding + this.state.borderWidth + 1.5
                 ) {
-                  console.log('working x');
                   newX =
                     position.x + this.state.padding + this.state.borderWidth;
                 }
