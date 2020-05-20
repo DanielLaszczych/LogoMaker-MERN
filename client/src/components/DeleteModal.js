@@ -27,7 +27,6 @@ class DeleteModal extends Component {
             background: 'var(--swatch-complement)',
             overflow: 'auto',
             cursor: 'default',
-            borderRadius: '25px',
             borderStyle: 'solid',
             borderColor: 'black',
           }}

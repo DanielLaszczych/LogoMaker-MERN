@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import gql from 'graphql-tag';
 import { Mutation } from 'react-apollo';
-import { Link } from 'react-router-dom';
 import LogoWorkspace from './LogoWorkspace';
 import Button from 'react-bootstrap/Button';
 
 const ADD_LOGO = gql`
   mutation AddLogo(
+    $userId: String!
     $logoName: String!
     $height: Int!
     $width: Int!
@@ -20,6 +20,7 @@ const ADD_LOGO = gql`
     $margin: Int!
   ) {
     addLogo(
+      userId: $userId
       logoName: $logoName
       height: $height
       width: $width
@@ -68,12 +69,31 @@ class CreateLogoScreen extends Component {
           'https://www.amerikickkansas.com/wp-content/uploads/2017/04/default-image.jpg',
         height: 100,
         width: 100,
-        x: 0,
-        y: 0,
+        x: 80,
+        y: 50,
         zIndex: 0,
       },
     ],
+    loggedIn: false,
+    userInfo: {},
   };
+
+  componentDidMount() {
+    fetch('/user')
+      .then((res) => res.json())
+      .then((res) =>
+        this.setState({ userInfo: res }, () => {
+          if (Object.keys(this.state.userInfo).length !== 0) {
+            this.setState({ loggedIn: true });
+          } else {
+            this.props.history.push('/');
+          }
+        })
+      )
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   render() {
     let logoName,
@@ -83,10 +103,10 @@ class CreateLogoScreen extends Component {
       borderWidth,
       padding,
       margin;
-    return (
+    return this.state.loggedIn ? (
       <Mutation
         mutation={ADD_LOGO}
-        onCompleted={() => this.props.history.push('/')}
+        onCompleted={() => this.props.history.push('/home')}
       >
         {(addLogo, { loading, error }) => (
           <div className='container'>
@@ -105,7 +125,7 @@ class CreateLogoScreen extends Component {
                   fontSize: '180%',
                   color: 'white',
                 }}
-                onClick={() => this.props.history.push('/')}
+                onClick={() => this.props.history.push('/home')}
               >
                 Home
               </div>
@@ -141,6 +161,7 @@ class CreateLogoScreen extends Component {
                     e.preventDefault();
                     addLogo({
                       variables: {
+                        userId: this.state.userInfo.id,
                         logoName: logoName.value,
                         height: this.state.height,
                         width: this.state.width,
@@ -196,7 +217,7 @@ class CreateLogoScreen extends Component {
                   <div className='form-group'>
                     <div>
                       <label htmlFor='fontSize' style={{ color: 'white' }}>
-                        Logo Dimensions
+                        Logo Dimensions (Bottom right corner to resize)
                       </label>
                     </div>
                     <div>
@@ -329,7 +350,9 @@ class CreateLogoScreen extends Component {
                             newTexts[index] = {
                               ...this.state.texts[this.state.currentText],
                             };
-                            newTexts[index].fontSize = event.target.value;
+                            newTexts[index].fontSize = parseInt(
+                              event.target.value
+                            );
                             this.setState({ texts: newTexts });
                           }}
                         />
@@ -921,7 +944,7 @@ class CreateLogoScreen extends Component {
           </div>
         )}
       </Mutation>
-    );
+    ) : null;
   }
 }
 

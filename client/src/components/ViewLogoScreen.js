@@ -56,15 +56,43 @@ class ViewLogoScreen extends Component {
     deleteModalVisible: false,
     currentText: 0,
     currentImage: 0,
+    loggedIn: false,
+    userInfo: {},
+    dataUrl: '',
+    texts: false,
+    images: false,
+    loadingData: true,
   };
+
+  componentDidMount() {
+    fetch('/user')
+      .then((res) => res.json())
+      .then((res) =>
+        this.setState({ userInfo: res }, () => {
+          if (Object.keys(this.state.userInfo).length !== 0) {
+            this.setState({ loggedIn: true });
+          } else {
+            this.props.history.push('/');
+          }
+        })
+      )
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   deleteModalVisibility = (visibility) => {
     this.setState({ deleteModalVisible: visibility });
   };
 
   render() {
-    return (
+    return this.state.loggedIn ? (
       <Query
+        fetchPolicy='network-only'
+        onCompleted={() => {
+          console.log('done');
+          this.setState({ loadingData: false });
+        }}
         pollInterval={500}
         query={GET_LOGO}
         variables={{ logoId: this.props.match.params.id }}
@@ -90,7 +118,7 @@ class ViewLogoScreen extends Component {
                     fontSize: '180%',
                     color: 'white',
                   }}
-                  onClick={() => this.props.history.push('/')}
+                  onClick={() => this.props.history.push('/home')}
                 >
                   Home
                 </div>
@@ -172,7 +200,7 @@ class ViewLogoScreen extends Component {
                                 ? 'danger'
                                 : 'outline-danger'
                             }
-                            style={{ textAlign: 'center' }}
+                            style={{ textAlign: 'center', marginRight: '15px' }}
                           >
                             {'<'}
                           </Button>
@@ -194,7 +222,7 @@ class ViewLogoScreen extends Component {
                                 ? 'danger'
                                 : 'outline-danger'
                             }
-                            style={{ textAlign: 'center' }}
+                            style={{ textAlign: 'center', marginLeft: '15px' }}
                           >
                             {'>'}
                           </Button>
@@ -207,7 +235,14 @@ class ViewLogoScreen extends Component {
                           Image #{data.logo.images[this.state.currentImage].id}
                         </dt>
                         <dt style={{ color: 'white' }}>Src:</dt>
-                        <dd style={{ color: 'white', marginBottom: '20px' }}>
+                        <dd
+                          style={{
+                            color: 'white',
+                            marginBottom: '20px',
+                            wordBreak: 'break-all',
+                            maxWidth: '250px',
+                          }}
+                        >
                           {data.logo.images[this.state.currentImage].src}
                         </dd>
                         <dt style={{ color: 'white' }}>Priority:</dt>
@@ -230,7 +265,7 @@ class ViewLogoScreen extends Component {
                                 ? 'danger'
                                 : 'outline-danger'
                             }
-                            style={{ textAlign: 'center' }}
+                            style={{ textAlign: 'center', marginRight: '15px' }}
                           >
                             {'<'}
                           </Button>
@@ -252,7 +287,7 @@ class ViewLogoScreen extends Component {
                                 ? 'danger'
                                 : 'outline-danger'
                             }
-                            style={{ textAlign: 'center' }}
+                            style={{ textAlign: 'center', marginLeft: '15px' }}
                           >
                             {'>'}
                           </Button>
@@ -287,7 +322,7 @@ class ViewLogoScreen extends Component {
                   <Mutation
                     mutation={DELETE_LOGO}
                     key={data.logo._id}
-                    onCompleted={() => this.props.history.push('/')}
+                    onCompleted={() => this.props.history.push('/home')}
                   >
                     {(removeLogo, { loading, error }) => (
                       <div>
@@ -307,16 +342,26 @@ class ViewLogoScreen extends Component {
                           >
                             <Link
                               to={`/edit/${data.logo._id}`}
-                              className='btn btn-success mr-3'
+                              className='btn btn-success'
                             >
                               Edit
                             </Link>
                             <button
                               type='submit'
-                              className='btn btn-danger ml-3'
+                              className='btn btn-danger ml-3 mr-3'
                             >
                               Delete
                             </button>
+                            <Button
+                              onClick={() => {
+                                var a = document.createElement('a');
+                                a.href = this.state.dataUrl;
+                                a.download = data.logo.logoName + '.png';
+                                a.click();
+                              }}
+                            >
+                              Save
+                            </Button>
                           </form>
                           {loading && <p>Loading...</p>}
                           {error && <p>Error :( Please try again</p>}
@@ -326,24 +371,29 @@ class ViewLogoScreen extends Component {
                   </Mutation>
                 </div>
               </div>
-              <LogoWorkspace
-                texts={data.logo.texts}
-                images={data.logo.images}
-                backgroundColor={data.logo.backgroundColor}
-                borderColor={data.logo.borderColor}
-                borderRadius={data.logo.borderRadius}
-                borderWidth={data.logo.borderWidth}
-                padding={data.logo.padding}
-                margin={data.logo.margin}
-                height={data.logo.height}
-                width={data.logo.width}
-                disabledEditing={true}
-              ></LogoWorkspace>
+              {!this.state.loadingData ? (
+                <LogoWorkspace
+                  onSave={(newDataUrl) => {
+                    this.setState({ dataUrl: newDataUrl });
+                  }}
+                  texts={this.state.texts || data.logo.texts}
+                  images={this.state.images || data.logo.images}
+                  backgroundColor={data.logo.backgroundColor}
+                  borderColor={data.logo.borderColor}
+                  borderRadius={data.logo.borderRadius}
+                  borderWidth={data.logo.borderWidth}
+                  padding={data.logo.padding}
+                  margin={data.logo.margin}
+                  height={data.logo.height}
+                  width={data.logo.width}
+                  disabledEditing={true}
+                ></LogoWorkspace>
+              ) : null}
             </div>
           );
         }}
       </Query>
-    );
+    ) : null;
   }
 }
 

@@ -1,10 +1,28 @@
 import React, { Component } from 'react';
 import { Rnd } from 'react-rnd';
-import { Resizable, ResizableBox } from 'react-resizable';
+import { ResizableBox } from 'react-resizable';
 import Draggable from 'react-draggable';
 import '../App.css';
+import * as html2Canvas from 'html2canvas';
 
 class LogoWorkspace extends Component {
+  state = {
+    firstLoad: true,
+  };
+
+  getBase64Image(img) {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+
+    var dataURL = canvas.toDataURL('image/png');
+
+    return dataURL;
+  }
+
   compareProps(prevProps, newProps) {
     let differentTexts = false;
     if (
@@ -126,6 +144,22 @@ class LogoWorkspace extends Component {
     }
   }
 
+  componentDidMount() {
+    if (this.props.disabledEditing) {
+      let opt = {
+        useCORS: true,
+        proxy: 'http://localhost:3000/proxy',
+        logging: true,
+        width: this.props.width + 10,
+        height: this.props.height + 5,
+      };
+      html2Canvas(document.querySelector('#logo'), opt).then((canvas) => {
+        var image = canvas.toDataURL('image/png');
+        this.props.onSave(image);
+      });
+    }
+  }
+
   render() {
     return (
       <div
@@ -147,6 +181,7 @@ class LogoWorkspace extends Component {
           }
         >
           <div
+            id='logo'
             style={{
               position: 'relative',
               height: this.props.height + 'px',
@@ -233,13 +268,14 @@ class LogoWorkspace extends Component {
                 }
               >
                 <img
+                  alt='logoImage'
                   id={image.id + 'image'}
                   draggable={false}
                   src={image.src}
                   style={{
                     height: image.height,
                     width: image.width,
-                    position: 'absolute',
+                    // position: 'absolute',
                   }}
                 />
               </Rnd>

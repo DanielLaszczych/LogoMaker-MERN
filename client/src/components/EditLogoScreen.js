@@ -1,10 +1,7 @@
-import React, { Component, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
 import gql from 'graphql-tag';
 import { Query, Mutation } from 'react-apollo';
-import { useQuery } from '@apollo/react-hooks';
 import LogoWorkspace from './LogoWorkspace';
-import { createSourceEventStream } from 'graphql';
 import Button from 'react-bootstrap/Button';
 
 const GET_LOGO = gql`
@@ -46,6 +43,7 @@ const GET_LOGO = gql`
 const UPDATE_LOGO = gql`
   mutation updateLogo(
     $id: String!
+    $userId: String!
     $logoName: String!
     $height: Int!
     $width: Int!
@@ -60,6 +58,7 @@ const UPDATE_LOGO = gql`
   ) {
     updateLogo(
       id: $id
+      userId: $userId
       logoName: $logoName
       height: $height
       width: $width
@@ -94,10 +93,29 @@ class EditLogoScreen extends Component {
     margin: false,
     height: false,
     width: false,
+    loggedIn: false,
+    userInfo: {},
   };
 
+  componentDidMount() {
+    fetch('/user')
+      .then((res) => res.json())
+      .then((res) =>
+        this.setState({ userInfo: res }, () => {
+          if (Object.keys(this.state.userInfo).length !== 0) {
+            this.setState({ loggedIn: true });
+          } else {
+            this.props.history.push('/');
+          }
+        })
+      )
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   render() {
-    return (
+    return this.state.loggedIn ? (
       <React.Fragment>
         <Query
           query={GET_LOGO}
@@ -126,6 +144,8 @@ class EditLogoScreen extends Component {
               borderRadius: data.logo.borderRadius,
               borderWidth: data.logo.borderWidth,
               logoName: data.logo.logoName,
+              currentImage: data.logo.images.length === 0 ? -1 : 0,
+              currentText: data.logo.texts.length === 0 ? -1 : 0,
             });
           }}
         >
@@ -137,7 +157,7 @@ class EditLogoScreen extends Component {
           <Mutation
             mutation={UPDATE_LOGO}
             key={this.state.id}
-            onCompleted={() => this.props.history.push(`/`)}
+            onCompleted={() => this.props.history.push(`/home`)}
           >
             {(updateLogo, { loading, error }) => (
               <div className='container'>
@@ -156,7 +176,7 @@ class EditLogoScreen extends Component {
                       fontSize: '180%',
                       color: 'white',
                     }}
-                    onClick={() => this.props.history.push('/')}
+                    onClick={() => this.props.history.push('/home')}
                   >
                     Home
                   </div>
@@ -193,6 +213,7 @@ class EditLogoScreen extends Component {
                         updateLogo({
                           variables: {
                             id: this.state.id,
+                            userId: this.state.userInfo.id,
                             logoName: this.state.logoName,
                             height: this.state.height,
                             width: this.state.width,
@@ -200,10 +221,10 @@ class EditLogoScreen extends Component {
                             images: this.state.images,
                             backgroundColor: this.state.backgroundColor,
                             borderColor: this.state.borderColor,
-                            borderRadius: this.state.borderRadius,
-                            borderWidth: this.state.borderWidth,
-                            padding: this.state.padding,
-                            margin: this.state.margin,
+                            borderRadius: parseInt(this.state.borderRadius),
+                            borderWidth: parseInt(this.state.borderWidth),
+                            padding: parseInt(this.state.padding),
+                            margin: parseInt(this.state.margin),
                           },
                         });
                       }}
@@ -379,7 +400,9 @@ class EditLogoScreen extends Component {
                                 newTexts[index] = {
                                   ...this.state.texts[this.state.currentText],
                                 };
-                                newTexts[index].fontSize = event.target.value;
+                                newTexts[index].fontSize = parseInt(
+                                  event.target.value
+                                );
                                 this.setState({ texts: newTexts });
                               }}
                             />
@@ -996,7 +1019,7 @@ class EditLogoScreen extends Component {
           </Mutation>
         ) : null}
       </React.Fragment>
-    );
+    ) : null;
   }
 }
 
