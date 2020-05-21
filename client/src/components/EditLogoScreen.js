@@ -711,8 +711,7 @@ class EditLogoScreen extends Component {
                                   : this.state.images[
                                       this.state.images.length - 1
                                     ].id + 1,
-                              src:
-                                'https://www.amerikickkansas.com/wp-content/uploads/2017/04/default-image.jpg',
+                              src: 'https://i.imgur.com/8u3skSq.png',
                               height: 100,
                               width: 100,
                               x: this.state.padding + this.state.borderWidth,

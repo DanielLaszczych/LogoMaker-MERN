@@ -224,6 +224,7 @@ class LogoWorkspace extends Component {
             ))}
             {this.props.images.map((image) => (
               <Rnd
+                style={{ zIndex: image.zIndex }}
                 disableDragging={this.props.disabledEditing}
                 dragAxis={this.props.disabledEditing ? 'none' : 'both'}
                 bounds='parent'
@@ -275,6 +276,7 @@ class LogoWorkspace extends Component {
                   style={{
                     height: image.height,
                     width: image.width,
+                    zIndex: image.zIndex,
                     // position: 'absolute',
                   }}
                 />
