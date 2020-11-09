@@ -54,6 +54,7 @@ class HomeScreen extends Component {
                   margin: '0 auto',
                   marginTop: '25px',
                   paddingTop: '20px',
+                  borderRadius: '15px',
                 }}
               >
                 <div className='row' style={{ marginBottom: '0px' }}>

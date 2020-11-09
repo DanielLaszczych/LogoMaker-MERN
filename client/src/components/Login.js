@@ -18,12 +18,13 @@ class Login extends Component {
           height: 'max-content',
           backgroundColor: '#E6E6E6',
           padding: '25px',
+          borderRadius: '15px',
         }}
       >
         <div
           style={{
             textAlign: 'center',
-            backgroundImage: 'linear-gradient(to bottom, #b8b808, #636723)',
+            backgroundImage: 'linear-gradient(to bottom, #2177F3, #6194DD)',
             color: 'white',
             fontSize: '48pt',
             borderColor: 'black',
