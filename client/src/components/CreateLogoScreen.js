@@ -57,7 +57,7 @@ class CreateLogoScreen extends Component {
         color: '000000',
         fontSize: 45,
         x: 198,
-        y: 120,
+        y: 0,
         zIndex: 1,
       },
     ],
@@ -65,7 +65,7 @@ class CreateLogoScreen extends Component {
     images: [
       {
         id: 1,
-        src: 'https://image.flaticon.com/icons/png/512/25/25231.png',
+        src: 'https://i.imgur.com/uWteCty.gif',
         height: 250,
         width: 300,
         x: 120,
